@@ -53,6 +53,7 @@
 			<artifactId>thymeleaf-layout-dialect</artifactId>
 		</dependency>
 
+<<<<<<< HEAD
 		<!-- https://mvnrepository.com/artifact/org.thymeleaf.extras/thymeleaf-extras-springsecurity5 -->
 		<dependency>
 		    <groupId>org.thymeleaf.extras</groupId>
@@ -60,6 +61,8 @@
 		</dependency>
 
 	
+=======
+>>>>>>> 634f6f3b34a1e3956b3cf80ed0e7eaf55f68d55d
 		<dependency>
 			<groupId>org.webjars</groupId>
 			<artifactId>webjars-locator-core</artifactId>
