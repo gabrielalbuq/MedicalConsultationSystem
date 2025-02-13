@@ -1,51 +1,51 @@
 //datatables - lista de médicos
-$(documento).ready(função() {
-	momento.locale('pt-BR');
-	var tabela = $('#tabela-usuários').DataTable({
-		procurando: verdadeiro,
-		comprimentoMenu: [ 5, 10 ],
-		processamento: verdadeiro,
-		serverSide: verdadeiro,
-		responsivo: verdadeiro,
+$(document).ready(function() {
+	moment.locale('pt-BR');
+	var table = $('#table-usuarios').DataTable({
+		searching : true,
+		lengthMenu : [ 5, 10 ],
+		processing : true,
+		serverSide : true,
+		responsive : true,
 		ajax : {
 			url : '/u/datatables/server/usuarios',
-			dados: 'dados'
+			data : 'data'
 		},
-		colunas: [
-				{dados : 'id'},
-				{dados : 'e-mail'},
-				{ dados : 'ativo',
-					render : função(ativo) {
-						return ativo == verdadeiro ? 'Sim': 'Não';
+		columns : [
+				{data : 'id'},
+				{data : 'email'},
+				{	data : 'ativo', 
+					render : function(ativo) {
+						return ativo == true ? 'Sim' : 'Não';
 					}
 				},
-				{ dados : 'perfis',									 
-					renderizar : função(perfis) {
-						var aux = novo Array();
-						$.each(perfis, função(índice, valor) {
-							  aux.push(valor.desc);
+				{	data : 'perfis',									 
+					render : function(perfis) {
+						var aux = new Array();
+						$.each(perfis, function( index, value ) {
+							  aux.push(value.desc);
 						});
-						retornar aux;
+						return aux;
 					},
-					ordenável: falso,
+					orderable : false,
 				},
-				{ dados : 'id',	
-					renderizar : função(id) {
-						retornar ''.concat('<a class="btn btn-sucesso btn-sm btn-bloco"', ' ')
-								 .concat('href="').concat('/u/editar/credenciais/usuario/').concat(id, '"', ' ')
+				{	data : 'id',	
+					render : function(id) {
+						return ''.concat('<a class="btn btn-success btn-sm btn-block"', ' ')
+								 .concat('href="').concat('/u/editar/credenciais/usuario/').concat(id, '"', ' ') 
 								 .concat('role="button" title="Editar" data-toggle="tooltip" data-placement="right">', ' ')
 								 .concat('<i class="fas fa-edit"></i></a>');
 					},
-					ordenável: falso
+					orderable : false
 				},
-				{ dados : 'id',	
-					renderizar : função(id) {
-						retornar ''.concat('<a class="btn btn-info btn-sm btn-bloco"', ' ')
-								 .concat('id="dp_').concat(id).concat('"', ' ')
+				{	data : 'id',	
+					render : function(id) {
+						return ''.concat('<a class="btn btn-info btn-sm btn-block"', ' ') 
+								 .concat('id="dp_').concat(id).concat('"', ' ') 
 								 .concat('role="button" title="Editar" data-toggle="tooltip" data-placement="right">', ' ')
 								 .concat('<i class="fas fa-edit"></i></a>');
 					},
-					ordenável: falso
+					orderable : false
 				}
 		]
 	});

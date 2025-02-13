@@ -34,7 +34,7 @@ public class EspecialidadeService {
 		datatables.setColunas(DatatablesColunas.ESPECIALIDADES);
 		Page<?> page = datatables.getSearch().isEmpty()
 				? repository.findAll(datatables.getPageable())
-				:repository.finAllByTitulo(datatables.getSearch(),datatables.getPageable());
+				: repository.finAllByTitulo(datatables.getSearch(),datatables.getPageable());
 		return datatables.getResponse(page);
 	}
 
