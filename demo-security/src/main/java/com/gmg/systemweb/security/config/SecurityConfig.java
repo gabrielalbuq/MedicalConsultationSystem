@@ -1,4 +1,3 @@
-<<<<<<< HEAD
 package com.gmg.systemweb.security.config;
 
 import java.nio.file.AccessDeniedException;
@@ -55,6 +54,3 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
 	
 	
 }
-=======
-
->>>>>>> 634f6f3b34a1e3956b3cf80ed0e7eaf55f68d55d
