@@ -2,6 +2,7 @@ package com.gmg.systemweb.security.service;
 
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 
 import javax.servlet.http.HttpServletRequest;
 
@@ -19,6 +20,7 @@ import org.springframework.transaction.annotation.Transactional;
 import com.gmg.systemweb.security.datatables.Datatables;
 import com.gmg.systemweb.security.datatables.DatatablesColunas;
 import com.gmg.systemweb.security.domain.Perfil;
+import com.gmg.systemweb.security.domain.PerfilTipo;
 import com.gmg.systemweb.security.domain.Usuario;
 import com.gmg.systemweb.security.repository.UsuarioRepository;
 
@@ -38,7 +40,8 @@ public class UsuarioService implements UserDetailsService{
 
 	@Override @Transactional(readOnly = true)
 	public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
-		Usuario usuario = buscarPorEmail(username);
+		Usuario usuario = buscarPorEmailEAtivo(username)
+				.orElseThrow(() -> new UsernameNotFoundException("Usuario " + username + " não encontrado."));
 		return new User(
 			usuario.getEmail(),
 			usuario.getSenha(),
@@ -93,6 +96,22 @@ public class UsuarioService implements UserDetailsService{
 	public void alterarSenha(Usuario usuario, String senha) {
 		usuario.setSenha(new BCryptPasswordEncoder().encode(senha));
 		repository.save(usuario);		
+	}
+
+	@Transactional(readOnly = false)
+	public void salvarCadastroPaciente(Usuario usuario)  {
+		String crypt = new BCryptPasswordEncoder().encode(usuario.getSenha());
+		usuario.setSenha(crypt);
+		usuario.addPerfil(PerfilTipo.PACIENTE);
+		repository.save(usuario);	
+		
+	
+	}
+	
+	@Transactional(readOnly = true)
+	public Optional<Usuario> buscarPorEmailEAtivo(String email) {
+		
+		return repository.findByEmailAndAtivo(email);
 	}
 }
 
