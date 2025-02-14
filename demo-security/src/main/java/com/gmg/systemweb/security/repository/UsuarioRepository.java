@@ -1,5 +1,7 @@
 package com.gmg.systemweb.security.repository;
 
+import java.util.Optional;
+
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
@@ -17,4 +19,9 @@ public interface UsuarioRepository extends JpaRepository<Usuario, Long>{
 			+ "join u.perfis p "
 			+ "where u.email like :search% OR p.desc like :search%")
 	public Page<Usuario> findByEmailOrPerfil(@Param("search") String search, Pageable pageable);
+	
+	@Query("select distinct u from Usuario u "
+			+ "join u.perfis p "
+			+ "where u.id = :usuarioId AND p.id IN :perfisId")
+	Optional<Usuario> findByIdAndPerfis(Long usuarioId, Long[] perfisId);
 }

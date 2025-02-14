@@ -70,5 +70,18 @@ public class UsuarioService implements UserDetailsService{
 		usuario.setSenha(crypt);
 		repository.save(usuario);
 	}
+
+	@Transactional(readOnly = true)
+	public Usuario buscarPorId(Long id) {
+		
+		return repository.findById(id).get();
+	}
+
+	@Transactional(readOnly = true)
+	public Usuario buscarPorIdEPerfis(Long usuarioId, Long[] perfisId) {
+		
+		return repository.findByIdAndPerfis(usuarioId, perfisId)
+				.orElseThrow(() -> new UsernameNotFoundException("Usuario não existente"));
+	}
 }
 
