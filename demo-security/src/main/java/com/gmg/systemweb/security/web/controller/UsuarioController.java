@@ -8,11 +8,14 @@ import javax.servlet.http.HttpServletRequest;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
+import org.springframework.security.core.userdetails.User;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
@@ -81,30 +84,57 @@ public class UsuarioController {
 	}
 	
 	// pre edicao de cadastro de usuarios
-		@GetMapping("/editar/dados/usuario/{id}/perfis/{perfis}")
-		public ModelAndView preEditarCadastroDadosPessoais(@PathVariable("id") Long usuarioId,
-														   @PathVariable("perfis") Long[] perfisId) {
-			Usuario us = service.buscarPorIdEPerfis(usuarioId, perfisId);
+	@GetMapping("/editar/dados/usuario/{id}/perfis/{perfis}")
+	public ModelAndView preEditarCadastroDadosPessoais(@PathVariable("id") Long usuarioId,
+													   @PathVariable("perfis") Long[] perfisId) {
+		Usuario us = service.buscarPorIdEPerfis(usuarioId, perfisId);
+		
+		if (us.getPerfis().contains(new Perfil(PerfilTipo.ADMIN.getCod())) &&
+			!us.getPerfis().contains(new Perfil(PerfilTipo.MEDICO.getCod())) ) {
 			
-			if (us.getPerfis().contains(new Perfil(PerfilTipo.ADMIN.getCod())) &&
-				!us.getPerfis().contains(new Perfil(PerfilTipo.MEDICO.getCod())) ) {
+				return new ModelAndView("usuario/cadastro", "usuario", us);
 				
-					return new ModelAndView("usuario/cadastro", "usuario", us);
-					
-			}else if(us.getPerfis().contains(new Perfil(PerfilTipo.MEDICO.getCod()))) {
-				
-				Medico medico = medicoService.buscarPorUsuarioId(usuarioId);
-				return medico.hasNotId()
-						? new ModelAndView("medico/cadastro", "medico", new Medico(new Usuario(usuarioId)))
-						: new ModelAndView("medico/cadastro", "medico", medico);			
-			}else if(us.getPerfis().contains(new Perfil(PerfilTipo.PACIENTE.getCod()))) {		
-				ModelAndView model  = new ModelAndView("error");
-				model.addObject("status", 403);
-				model.addObject("error", "Área Restrita");
-				model.addObject("message", "Os dados de pacientes são restritos a ele.");
-				return model;
-			}
+		}else if(us.getPerfis().contains(new Perfil(PerfilTipo.MEDICO.getCod()))) {
 			
-			return new ModelAndView("redirect:/u/lista");
+			Medico medico = medicoService.buscarPorUsuarioId(usuarioId);
+			return medico.hasNotId()
+					? new ModelAndView("medico/cadastro", "medico", new Medico(new Usuario(usuarioId)))
+					: new ModelAndView("medico/cadastro", "medico", medico);			
+		}else if(us.getPerfis().contains(new Perfil(PerfilTipo.PACIENTE.getCod()))) {		
+			ModelAndView model  = new ModelAndView("error");
+			model.addObject("status", 403);
+			model.addObject("error", "Área Restrita");
+			model.addObject("message", "Os dados de pacientes são restritos a ele.");
+			return model;
 		}
+		
+		return new ModelAndView("redirect:/u/lista");
+	}
+	
+	 @GetMapping("/editar/senha")
+    public String abrirEditarSenha() {
+    	
+    	return "usuario/editar-senha";
+    }
+	
+	@PostMapping("/confirmar/senha")
+    public String editarSenha(@RequestParam("senha1") String s1, @RequestParam("senha2") String s2, 
+    						  @RequestParam("senha3") String s3, @AuthenticationPrincipal User user,
+    						  RedirectAttributes attr) {
+    	
+    	if (!s1.equals(s2)) {
+    		attr.addFlashAttribute("falha", "Senhas não conferem, tente novamente");
+    		return "redirect:/u/editar/senha";
+    	}
+    	
+    	Usuario u = service.buscarPorEmail(user.getUsername());
+    	if(!UsuarioService.isSenhaCorreta(s3, u.getSenha())) {
+    		attr.addFlashAttribute("falha", "Senha atual não confere, tente novamente");
+    		return "redirect:/u/editar/senha";
+    	}
+    		
+    	service.alterarSenha(u, s1);
+    	attr.addFlashAttribute("sucesso", "Senha alterada com sucesso.");
+    	return "redirect:/u/editar/senha";
+    }
 }
