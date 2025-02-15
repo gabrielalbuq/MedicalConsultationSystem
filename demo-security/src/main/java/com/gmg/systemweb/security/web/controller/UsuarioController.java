@@ -157,7 +157,7 @@ public class UsuarioController {
     
     // rebece o form da página cadastrar-se
     @PostMapping("/cadastro/paciente/salvar")
-    public String salvarCadastroPaciente(Usuario usuario, BindingResult result){
+    public String salvarCadastroPaciente(Usuario usuario, BindingResult result) throws MessagingException{
     	try {
     	service.salvarCadastroPaciente(usuario);
     	} catch (DataIntegrityViolationException ex) {
@@ -166,4 +166,49 @@ public class UsuarioController {
     	}
     	return "redirect:/u/cadastro/realizado";
     }
+    
+    // recebe a requisicao de confirmacao de cadastro
+    @GetMapping("/confirmacao/cadastro")
+    public String respostaConfirmacaoCadastroPaciente(@RequestParam("codigo") String codigo, 
+    												  RedirectAttributes attr) {    	
+        service.ativarCadastroPaciente(codigo);
+        attr.addFlashAttribute("alerta", "sucesso");
+        attr.addFlashAttribute("titulo", "Cadastro Ativado!");
+        attr.addFlashAttribute("texto", "Parabéns, seu cadastro está ativo.");
+        attr.addFlashAttribute("subtexto", "Singa com seu login/senha");
+    	return "redirect:/login";
+    } 
+    
+    // abre a pagina de pedido de redefinicao de senha
+    @GetMapping("/p/redefinir/senha")
+    public String pedidoRedefinirSenha() {
+    	 
+    	return "usuario/pedido-recuperar-senha";
+    }
+    
+    // form de pedido de recuperar senha
+    @GetMapping("/p/recuperar/senha")
+    public String redefinirSenha(String email, ModelMap model) throws MessagingException {
+    	service.pedidoRedefinicaoDeSenha(email);
+    	model.addAttribute("sucesso", "Em instantes você reberá um e-mail para "
+    			+ "prosseguir com a redefinição de sua senha.");
+    	model.addAttribute("usuario", new Usuario(email));
+    	return "usuario/recuperar-senha";
+    }
+    
+    // salvar a nova senha via recuperacao de senha
+    @PostMapping("/p/nova/senha")
+    public String confirmacaoDeRedefinicaoDeSenha(Usuario usuario, ModelMap model) {
+    	Usuario u = service.buscarPorEmail(usuario.getEmail());
+    	if (!usuario.getCodigoVerificador().equals(u.getCodigoVerificador())) {
+    		model.addAttribute("falha", "Código verificador não confere.");
+    		return "usuario/recuperar-senha";
+    	}
+    	u.setCodigoVerificador(null);
+    	service.alterarSenha(u, usuario.getSenha());
+    	model.addAttribute("alerta", "sucesso");
+    	model.addAttribute("titulo", "Senha redefinida!");
+    	model.addAttribute("texto", "Você já pode logar no sistema.");
+    	return "login";
+    } 
 }
