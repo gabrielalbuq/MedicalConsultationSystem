@@ -1,5 +1,7 @@
 package com.gmg.systemweb.security.web.exception;
 
+import javax.mail.MessagingException;
+
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
@@ -13,7 +15,7 @@ public class ExceptionController {
 	@ExceptionHandler(UsernameNotFoundException.class)
 	public ModelAndView usuarioNaoEncontradoException(UsernameNotFoundException ex) {
 		ModelAndView model  = new ModelAndView("error");
-		model.addObject("status", 404);
+		model.addObject("st 	atus", 404);
 		model.addObject("error", "Operação não pode ser realizada");
 		model.addObject("message", ex.getMessage());
 		return model;
@@ -28,3 +30,4 @@ public class ExceptionController {
 		return model;
 	}
 }
+ 	

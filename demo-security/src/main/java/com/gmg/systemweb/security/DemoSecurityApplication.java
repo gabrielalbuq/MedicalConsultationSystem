@@ -9,7 +9,7 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import com.gmg.systemweb.security.service.EmailService;
 
 @SpringBootApplication
-public class DemoSecurityApplication implements CommandLineRunner{
+public class DemoSecurityApplication{
 
 	public static void main(String[] args) {
 
@@ -20,10 +20,4 @@ public class DemoSecurityApplication implements CommandLineRunner{
 
 	@Autowired
 	EmailService service;
-	
-	@Override
-	public void run(String... args) throws Exception {
-		
-		service.enviarPedidoDeConfirmacaoDeCadastro("contato.gabriell021@gmail.com", "9871df");
-	}
 }

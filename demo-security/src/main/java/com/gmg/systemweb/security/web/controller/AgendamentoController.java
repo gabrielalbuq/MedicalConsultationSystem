@@ -33,12 +33,12 @@ import com.gmg.systemweb.security.service.PacienteService;
 public class AgendamentoController {
 	
 	@Autowired
-	private AgendamentoService service;	
+	private AgendamentoService service;
 	@Autowired
 	private PacienteService pacienteService;
 	@Autowired
 	private EspecialidadeService especialidadeService;	
-	
+
 	// abre a pagina de agendamento de consultas 
 	@PreAuthorize("hasAnyAuthority('PACIENTE', 'MEDICO')")
 	@GetMapping({"/agendar"})
@@ -51,7 +51,7 @@ public class AgendamentoController {
 	@PreAuthorize("hasAnyAuthority('PACIENTE', 'MEDICO')")
 	@GetMapping("/horario/medico/{id}/data/{data}")
 	public ResponseEntity<?> getHorarios(@PathVariable("id") Long id,
-										 @PathVariable("data") @DateTimeFormat(iso = ISO.DATE) LocalDate data) {
+						@PathVariable("data") @DateTimeFormat(iso = ISO.DATE) LocalDate data) {
 		
 		return ResponseEntity.ok(service.buscarHorariosNaoAgendadosPorMedicoIdEData(id, data));
 	}
@@ -101,7 +101,7 @@ public class AgendamentoController {
 	}
 	
 	// localizar agendamento pelo id e envia-lo para a pagina de cadastro
-	@PreAuthorize("hasAnyAuthority('PACIENTE','MEDICO')")
+	@PreAuthorize("hasAnyAuthority('PACIENTE', 'MEDICO')")
 	@GetMapping("/editar/consulta/{id}") 
 	public String preEditarConsultaPaciente(@PathVariable("id") Long id, 
 										    ModelMap model, @AuthenticationPrincipal User user) {
@@ -112,10 +112,10 @@ public class AgendamentoController {
 		return "agendamento/cadastro";
 	}
 	
-	@PreAuthorize("hasAnyAuthority('PACIENTE','MEDICO')")
+	@PreAuthorize("hasAnyAuthority('PACIENTE', 'MEDICO')")
 	@PostMapping("/editar")
 	public String editarConsulta(Agendamento agendamento, 
-								 RedirectAttributes attr, @AuthenticationPrincipal User user) {
+						         RedirectAttributes attr, @AuthenticationPrincipal User user) {
 		String titulo = agendamento.getEspecialidade().getTitulo();
 		Especialidade especialidade = especialidadeService
 				.buscarPorTitulos(new String[] {titulo})

@@ -12,21 +12,21 @@ import com.gmg.systemweb.security.domain.PerfilTipo;
 import com.gmg.systemweb.security.service.UsuarioService;
 
 @EnableGlobalMethodSecurity(prePostEnabled = true)
-@EnableWebSecurity
+@EnableWebSecurity 
 public class SecurityConfig extends WebSecurityConfigurerAdapter {
 	
 	private static final String ADMIN = PerfilTipo.ADMIN.getDesc();
-	private static final String MEDICO = PerfilTipo.MEDICO.getDesc();
-	private static final String PACIENTE = PerfilTipo.PACIENTE.getDesc();
-
+    private static final String MEDICO = PerfilTipo.MEDICO.getDesc();
+    private static final String PACIENTE = PerfilTipo.PACIENTE.getDesc();
+	
 	@Autowired
 	private UsuarioService service;
-		
+
 	@Override
 	protected void configure(HttpSecurity http) throws Exception {
 		
 		http.authorizeRequests()
-			//acessos publicos liberados
+			// acessos públicos liberados
 			.antMatchers("/webjars/**", "/css/**", "/image/**", "/js/**").permitAll()
 			.antMatchers("/", "/home").permitAll()
 			.antMatchers("/u/novo/cadastro", "/u/cadastro/realizado", "/u/cadastro/paciente/salvar").permitAll()
@@ -43,7 +43,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
 			.antMatchers("/medicos/**").hasAuthority(MEDICO)
 			
 			// acessos privados pacientes
-			.antMatchers("/pacientes/**").hasAuthority(PACIENTE)
+			.antMatchers("/pacientes/**").hasAuthority(PACIENTE)			
 			
 			// acessos privados especialidades
 			.antMatchers("/especialidades/datatables/server/medico/*").hasAnyAuthority(MEDICO, ADMIN)
@@ -62,7 +62,9 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
 				.logoutSuccessUrl("/")
 			.and()
 				.exceptionHandling()
-				.accessDeniedPage("/acesso-negado");
+				.accessDeniedPage("/acesso-negado")
+			.and()
+				.rememberMe();
 	}
 
 	@Override
@@ -72,4 +74,5 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
 	}
 	
 	
+
 }

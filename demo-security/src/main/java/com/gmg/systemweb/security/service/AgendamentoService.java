@@ -27,7 +27,6 @@ public class AgendamentoService {
 	@Autowired
 	private Datatables datatables;
 
-	
 	@Transactional(readOnly = true)
 	public List<Horario> buscarHorariosNaoAgendadosPorMedicoIdEData(Long id, LocalDate data) {
 		
@@ -76,7 +75,7 @@ public class AgendamentoService {
 	public Agendamento buscarPorIdEUsuario(Long id, String email) {
 		
 		return repository
-				.findByIdAndPacienteOrMedicoEmail(id, email)	
+				.findByIdAndPacienteOrMedicoEmail(id, email)
 				.orElseThrow(() -> new AcessoNegadoException("Acesso negado ao usuário: " + email));
 	}
 
@@ -85,4 +84,5 @@ public class AgendamentoService {
 		
 		repository.deleteById(id);
 	}
+
 }
